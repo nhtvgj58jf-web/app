@@ -1,1 +1,40 @@
+name: Build IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
+
+      - name: Archive (unsigned)
+        run: |
+          xcodebuild archive \
+            -project AimTrainer.xcodeproj \
+            -scheme AimTrainer \
+            -sdk iphoneos \
+            -archivePath build/AimTrainer.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/AimTrainer.xcarchive/Products/Applications/AimTrainer.app build/Payload/
+          cd build
+          zip -r AimTrainer.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AimTrainer-ipa
+          path: build/AimTrainer.ipa
 
