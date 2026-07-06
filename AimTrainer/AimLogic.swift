@@ -6,7 +6,6 @@ struct Vector3 {
     var z: Float
 }
 
-/// Calculates the normalized look-at direction from currentPos to targetPos
 func calculateLookAt(currentPos: Vector3, targetPos: Vector3) -> Vector3 {
     var direction = Vector3(
         x: targetPos.x - currentPos.x,
@@ -26,6 +25,10 @@ func calculateLookAt(currentPos: Vector3, targetPos: Vector3) -> Vector3 {
     return direction
 }
 
-/// Predicts target position based on velocity and time-to-impact (lead calculation)
-func calculateIntercept(targetPos: Vector3, targ
-
+func calculateIntercept(targetPos: Vector3, targetVelocity: Vector3, timeToTarget: Float) -> Vector3 {
+    return Vector3(
+        x: targetPos.x + targetVelocity.x * timeToTarget,
+        y: targetPos.y + targetVelocity.y * timeToTarget,
+        z: targetPos.z + targetVelocity.z * timeToTarget
+    )
+}
